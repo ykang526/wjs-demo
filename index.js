@@ -23,6 +23,27 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
+
+// Get image data (base64)
+
+app.get('/api/image/:imageFilename', (req, res) => {
+    res.send(courses);
+});
+
+
+// Upload image data 
+app.post('/api/image/upload', (req, res) => {
+    res.send(courses);
+});
+
+
+
+
+
+
+
+
+
 app.get('/api/courses', (req, res) => {
     res.send(courses);
 });
