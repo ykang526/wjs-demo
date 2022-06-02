@@ -3,7 +3,10 @@ const express = require('express');
 const app = express();
 
 app.use(express.json());
-
+// user requests an image
+// the request comes in and the middleware catches it first.
+//
+app.use(express.static('public'));
 
 
 const courses = [
@@ -12,8 +15,12 @@ const courses = [
     { id: 3, name: 'course 3' },
 ]
 
+
+
+
+
 app.get('/', (req, res) => {
-    res.send('Hello World');
+    res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/api/courses', (req, res) => {
@@ -27,7 +34,7 @@ app.post('/api/courses', (req, res) => {
 
     const course = {
         id: courses.length + 1,
-        name: req.body.name
+        name: "course " + Number(courses.length + 1)
     };
     courses.push(course);
     res.send(course);
@@ -40,21 +47,21 @@ app.get('/api/courses/:id', (req, res) => {
     res.send(course);
 });
 
-app.put('/api/courses/:id', (req, res) => {
+app.put('/api/courses/', (req, res) => {
     //look up the course
     //If it doesn't exist, return 404
-    const course = courses.find(c => c.id === parseInt(req.params.id));
-    if (!course) return res.status(404).send('The course with the given ID was not found');
+    //const course = courses.find(c => c.id === parseInt(req.params.id));
+    //if (!course) return res.status(404).send('The course with the given ID was not found');
 
     //validate
     //If invalid, return 400 - bad request
     //const result = validateCourse(req.body);
-    const { error } = validateCourse(req.body); // same as result.error
-    if (error) return res.status(400).send(error.details[0].message);
+    //const { error } = validateCourse(req.body); // same as result.error
+    //if (error) return res.status(400).send(error.details[0].message);
     //update course
-    course.name = req.body.name;
+    courses[1].name = "changed";
     //return the updated course
-    res.send(course);
+    res.send(courses);
 })
 
 const port = process.env.PORT || 3000;
@@ -68,16 +75,11 @@ function validateCourse(course) {
     return schema.validate(course);
 }
 
-app.delete('/api/courses/:id', (req, res) => {
-    // Look up course
-    // If it does not exist, return 404
-    const course = courses.find(c => c.id === parseInt(req.params.id));
-    if (!course) return res.status(404).send('The course with the given ID was not found');
-
-    // Delete
-    const index = courses.indexOf(course);
-    courses.splice(index, 1);
+app.delete('/api/courses/', (req, res) => {
+    var lastelem = courses.length - 1;
+    const retval = courses[lastelem];
+    courses.splice(lastelem, 1);
 
     //return the same course
-    res.send(course);
+    res.send(retval);
 });
